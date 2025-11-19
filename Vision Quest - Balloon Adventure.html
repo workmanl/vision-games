@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vision Quest: Balloon Adventure</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(180deg, #1a0033 0%, #330066 50%, #4d0099 100%);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      overflow-y: auto;
+      padding: 20px 0;
+    }
+
+    .container {
+      text-align: center;
+      padding: 20px;
+      max-width: 1000px;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      background: linear-gradient(45deg, #ff6b35, #ffea00, #ff1744);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 30px rgba(255, 107, 53, 0.5);
+      animation: titleFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes titleFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
+    }
+
+    .subtitle {
+      font-size: 1.2em;
+      margin-bottom: 10px;
+      color: #ffea00;
+      font-weight: 600;
+    }
+
+    .instructions {
+      font-size: 1.1em;
+      margin-bottom: 15px;
+      padding: 10px 20px;
+      background: rgba(255, 234, 0, 0.2);
+      border-radius: 15px;
+      border: 3px solid #ffea00;
+      display: inline-block;
+      font-weight: bold;
+      color: #ffea00;
+      box-shadow: 0 0 20px rgba(255, 234, 0, 0.3);
+    }
+
+    #game {
+      position: relative;
+      width: 90vw;
+      max-width: 900px;
+      height: 50vh;
+      min-height: 400px;
+      max-height: 600px;
+      border: 4px solid #ff6b35;
+      background: linear-gradient(180deg, #0d0221 0%, #1a0b3d 100%);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(255, 107, 53, 0.5), inset 0 -50px 100px rgba(255, 107, 53, 0.1);
+      margin: 0 auto;
+      position: relative;
+    }
+
+    /* Clouds */
+    .cloud {
+      position: absolute;
+      background: rgba(255, 107, 53, 0.15);
+      border-radius: 100px;
+      opacity: 0.6;
+      animation: cloudFloat 30s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes cloudFloat {
+      0% { transform: translateX(-200px); }
+      100% { transform: translateX(calc(90vw + 200px)); }
+    }
+
+    .cloud::before,
+    .cloud::after {
+      content: '';
+      position: absolute;
+      background: rgba(255, 107, 53, 0.15);
+      border-radius: 100px;
+    }
+
+    /* Balloons */
+    .balloon {
+      position: absolute;
+      cursor: pointer;
+      transition: transform 0.1s ease;
+      animation: balloonSway 3s ease-in-out infinite;
+      filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.2));
+    }
+
+    @keyframes balloonSway {
+      0%, 100% { transform: translateX(0px) rotate(-2deg); }
+      50% { transform: translateX(8px) rotate(2deg); }
+    }
+
+    .balloon:hover {
+      transform: scale(1.1) !important;
+    }
+
+    .balloon-body {
+      width: 60px;
+      height: 75px;
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5em;
+      box-shadow: inset -10px -10px 20px rgba(0, 0, 0, 0.1),
+                  inset 10px 10px 20px rgba(255, 255, 255, 0.5);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .balloon.small .balloon-body {
+      width: 45px;
+      height: 56px;
+      font-size: 1.2em;
+    }
+
+    .balloon.medium .balloon-body {
+      width: 60px;
+      height: 75px;
+      font-size: 1.5em;
+    }
+
+    .balloon.large .balloon-body {
+      width: 75px;
+      height: 94px;
+      font-size: 1.8em;
+    }
+
+    .balloon-string {
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      width: 2px;
+      height: 40px;
+      background: rgba(100, 100, 100, 0.4);
+      transform-origin: top center;
+      animation: stringWiggle 2s ease-in-out infinite;
+    }
+
+    @keyframes stringWiggle {
+      0%, 100% { transform: translateX(-50%) rotate(0deg); }
+      25% { transform: translateX(-50%) rotate(3deg); }
+      75% { transform: translateX(-50%) rotate(-3deg); }
+    }
+
+    .balloon-knot {
+      position: absolute;
+      bottom: -5px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 8px;
+      height: 8px;
+      background: rgba(80, 80, 80, 0.6);
+      border-radius: 50%;
+    }
+
+    /* Balloon colors - High contrast warm tones */
+    .balloon-orange .balloon-body { background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%); }
+    .balloon-yellow .balloon-body { background: linear-gradient(135deg, #ffea00 0%, #ffd600 100%); }
+    .balloon-red .balloon-body { background: linear-gradient(135deg, #ff1744 0%, #f50057 100%); }
+    .balloon-pink .balloon-body { background: linear-gradient(135deg, #ff006e 0%, #ff4081 100%); }
+    .balloon-magenta .balloon-body { background: linear-gradient(135deg, #d500f9 0%, #e040fb 100%); }
+    .balloon-purple .balloon-body { background: linear-gradient(135deg, #7c4dff 0%, #9575cd 100%); }
+    .balloon-cyan .balloon-body { background: linear-gradient(135deg, #00e5ff 0%, #18ffff 100%); }
+    .balloon-lime .balloon-body { background: linear-gradient(135deg, #c6ff00 0%, #aeea00 100%); }
+
+    /* Particle effects */
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: particlePop 0.6s ease-out forwards;
+    }
+
+    @keyframes particlePop {
+      0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(var(--tx), var(--ty)) scale(0);
+        opacity: 0;
+      }
+    }
+
+    /* Confetti */
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      pointer-events: none;
+      animation: confettiFall 2s ease-out forwards;
+    }
+
+    @keyframes confettiFall {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(var(--fall)) rotate(var(--rotate));
+        opacity: 0;
+      }
+    }
+
+    #hud {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      margin-top: 20px;
+      padding: 15px;
+      background: rgba(255, 107, 53, 0.15);
+      border-radius: 15px;
+      border: 3px solid #ff6b35;
+      gap: 20px;
+      flex-wrap: wrap;
+      box-shadow: 0 5px 20px rgba(255, 107, 53, 0.3);
+      backdrop-filter: blur(10px);
+    }
+
+    .stat {
+      text-align: center;
+      flex: 1;
+      min-width: 100px;
+    }
+
+    .stat-label {
+      font-size: 0.9em;
+      color: #ffea00;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+
+    .stat-value {
+      font-size: 2em;
+      font-weight: bold;
+      background: linear-gradient(45deg, #ff6b35, #ffea00);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 5px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ff6b35, #ffea00);
+      border-radius: 10px;
+      transition: width 0.3s ease;
+      box-shadow: 0 0 10px rgba(255, 107, 53, 0.8);
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 15px 40px;
+      font-size: 1.3em;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+      border-radius: 50px;
+      background: linear-gradient(45deg, #ff6b35, #ffea00);
+      color: #1a0033;
+      box-shadow: 0 5px 20px rgba(255, 107, 53, 0.5);
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba(255, 234, 0, 0.7);
+    }
+
+    button:active {
+      transform: translateY(-1px);
+    }
+
+    .achievement {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(26, 0, 51, 0.95);
+      padding: 30px 50px;
+      border-radius: 20px;
+      border: 3px solid #ffea00;
+      font-size: 2em;
+      font-weight: bold;
+      color: #ffea00;
+      box-shadow: 0 0 50px rgba(255, 234, 0, 0.7);
+      animation: achievementPop 2s ease forwards;
+      z-index: 1000;
+    }
+
+    @keyframes achievementPop {
+      0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+      10% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+      90% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+    }
+
+    .difficulty-selector {
+      margin: 20px 0 10px 0;
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .difficulty-btn {
+      padding: 10px 25px;
+      font-size: 1em;
+      border-radius: 25px;
+      border: 2px solid #ff6b35;
+      background: rgba(255, 107, 53, 0.2);
+      color: #ffea00;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .difficulty-btn.active {
+      background: linear-gradient(45deg, #ff6b35, #ffea00);
+      border-color: #ffea00;
+      color: #1a0033;
+      transform: scale(1.1);
+    }
+
+    .difficulty-btn:hover {
+      background: rgba(255, 107, 53, 0.4);
+    }
+
+    .mode-selector {
+      margin: 15px 0;
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .mode-btn {
+      padding: 12px 30px;
+      font-size: 1em;
+      border-radius: 25px;
+      border: 3px solid #ff6b35;
+      background: rgba(255, 107, 53, 0.2);
+      color: #ffea00;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .mode-btn.active {
+      background: linear-gradient(45deg, #ff6b35, #ffea00);
+      border-color: #ffea00;
+      color: #1a0033;
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(255, 107, 53, 0.5);
+    }
+
+    .mode-btn:hover {
+      background: rgba(255, 107, 53, 0.4);
+    }
+
+    @media (max-width: 950px) {
+      #game {
+        width: 95vw;
+        height: 45vh;
+      }
+      h1 {
+        font-size: 2em;
+      }
+      .stat-value {
+        font-size: 1.5em;
+      }
+      button {
+        font-size: 1em;
+        padding: 12px 30px;
+      }
+    }
+
+    @media (max-height: 800px) {
+      #game {
+        height: 40vh;
+        min-height: 300px;
+      }
+      h1 {
+        font-size: 2em;
+        margin-bottom: 5px;
+      }
+      .subtitle, .instructions {
+        font-size: 1em;
+        margin-bottom: 8px;
+      }
+      #hud {
+        padding: 10px;
+        margin-top: 15px;
+      }
+      .stat-value {
+        font-size: 1.3em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎈 Vision Quest: Balloon Adventure 🎈</h1>
+    <p class="subtitle">Pop the right balloons and reach for the sky!</p>
+
+    <div class="mode-selector">
+      <button class="mode-btn active" data-mode="color">Color Match Mode</button>
+      <button class="mode-btn" data-mode="emoji">Emoji Hunt Mode</button>
+      <button class="mode-btn" data-mode="size">Size Challenge Mode</button>
+    </div>
+
+    <p class="instructions" id="instructions">Pop all <strong>GREEN</strong> balloons! 🎯</p>
+
+    <div class="difficulty-selector">
+      <button class="difficulty-btn" data-difficulty="easy">Easy</button>
+      <button class="difficulty-btn active" data-difficulty="medium">Medium</button>
+      <button class="difficulty-btn" data-difficulty="hard">Hard</button>
+    </div>
+
+    <div id="game">
+      <!-- Clouds will be added here -->
+    </div>
+
+    <div id="hud">
+      <div class="stat">
+        <div class="stat-label">Score</div>
+        <div class="stat-value" id="score">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Level</div>
+        <div class="stat-value" id="level">1</div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="levelProgress"></div>
+        </div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Combo</div>
+        <div class="stat-value" id="combo">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Missed</div>
+        <div class="stat-value" id="missed">0</div>
+      </div>
+    </div>
+
+    <button id="startBtn">🎈 Start Adventure</button>
+  </div>
+
+  <script>
+    const game = document.getElementById('game');
+    const scoreEl = document.getElementById('score');
+    const levelEl = document.getElementById('level');
+    const comboEl = document.getElementById('combo');
+    const missedEl = document.getElementById('missed');
+    const levelProgress = document.getElementById('levelProgress');
+    const startBtn = document.getElementById('startBtn');
+    const instructionsEl = document.getElementById('instructions');
+
+    let balloons = [];
+    let running = false;
+    let score = 0;
+    let level = 1;
+    let combo = 0;
+    let missed = 0;
+    let spawnInterval = null;
+    let difficulty = 'medium';
+    let gameMode = 'color';
+    let targetColor = 'orange';
+    let targetEmoji = '⭐';
+    let targetSize = 'large';
+    let comboTimer = null;
+
+    const balloonColors = ['orange', 'yellow', 'red', 'pink', 'magenta', 'purple'];
+    const distractorColors = ['cyan', 'lime'];
+    const balloonEmojis = ['⭐', '💎', '🌟', '✨', '💫', '🔮', '🎯', '🏆'];
+    const sizes = ['small', 'medium', 'large'];
+
+    const difficultySettings = {
+      easy: { spawnRate: 1200, speed: 0.8, distractorChance: 0.3 },
+      medium: { spawnRate: 900, speed: 1.2, distractorChance: 0.5 },
+      hard: { spawnRate: 700, speed: 1.6, distractorChance: 0.7 }
+    };
+
+    // Create clouds
+    function createClouds() {
+      for (let i = 0; i < 5; i++) {
+        const cloud = document.createElement('div');
+        cloud.className = 'cloud';
+        cloud.style.width = 80 + Math.random() * 60 + 'px';
+        cloud.style.height = 40 + Math.random() * 20 + 'px';
+        cloud.style.top = Math.random() * 50 + '%';
+        cloud.style.left = Math.random() * 100 + '%';
+        cloud.style.animationDelay = Math.random() * 10 + 's';
+        cloud.style.animationDuration = 20 + Math.random() * 20 + 's';
+
+        const before = document.createElement('div');
+        before.style.width = cloud.style.width;
+        before.style.height = cloud.style.height;
+
+        game.appendChild(cloud);
+      }
+    }
+
+    // Mode selection
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        gameMode = btn.dataset.mode;
+        updateInstructions();
+      });
+    });
+
+    // Difficulty selection
+    document.querySelectorAll('.difficulty-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.difficulty-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        difficulty = btn.dataset.difficulty;
+      });
+    });
+
+    function updateInstructions() {
+      if (gameMode === 'color') {
+        const colorNames = { orange: 'ORANGE', yellow: 'YELLOW', red: 'RED', pink: 'PINK', magenta: 'MAGENTA', purple: 'PURPLE', cyan: 'CYAN', lime: 'LIME' };
+        instructionsEl.innerHTML = `Pop all <strong>${colorNames[targetColor]}</strong> balloons! 🎯`;
+      } else if (gameMode === 'emoji') {
+        instructionsEl.innerHTML = `Pop all <strong>${targetEmoji}</strong> balloons! 🎯`;
+      } else if (gameMode === 'size') {
+        instructionsEl.innerHTML = `Pop all <strong>${targetSize.toUpperCase()}</strong> balloons! 🎯`;
+      }
+    }
+
+    // Create particle explosion
+    function createExplosion(x, y, color) {
+      const particleCount = 12;
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = x + 'px';
+        particle.style.top = y + 'px';
+        particle.style.width = Math.random() * 8 + 4 + 'px';
+        particle.style.height = particle.style.width;
+        particle.style.background = color;
+
+        const angle = (Math.PI * 2 * i) / particleCount;
+        const velocity = 40 + Math.random() * 40;
+        const tx = Math.cos(angle) * velocity;
+        const ty = Math.sin(angle) * velocity;
+
+        particle.style.setProperty('--tx', tx + 'px');
+        particle.style.setProperty('--ty', ty + 'px');
+
+        game.appendChild(particle);
+        setTimeout(() => particle.remove(), 600);
+      }
+
+      // Add confetti for correct pops
+      for (let i = 0; i < 8; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = x + 'px';
+        confetti.style.top = y + 'px';
+        confetti.style.background = ['#ff6b35', '#ffea00', '#ff1744', '#d500f9'][Math.floor(Math.random() * 4)];
+        confetti.style.setProperty('--fall', Math.random() * 300 + 200 + 'px');
+        confetti.style.setProperty('--rotate', Math.random() * 720 + 'deg');
+
+        game.appendChild(confetti);
+        setTimeout(() => confetti.remove(), 2000);
+      }
+    }
+
+    // Show achievement
+    function showAchievement(text) {
+      const achievement = document.createElement('div');
+      achievement.className = 'achievement';
+      achievement.textContent = text;
+      game.appendChild(achievement);
+
+      playSound('achievement');
+
+      setTimeout(() => achievement.remove(), 2000);
+    }
+
+    // Sound effects
+    function playSound(type) {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      if (type === 'pop') {
+        oscillator.frequency.value = 800;
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.1);
+      } else if (type === 'wrong') {
+        oscillator.frequency.value = 200;
+        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.2);
+      } else if (type === 'levelup') {
+        oscillator.frequency.value = 523.25;
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.3);
+      } else if (type === 'achievement') {
+        oscillator.frequency.value = 659.25;
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.5);
+      }
+    }
+
+    // Spawn balloon
+    function spawnBalloon() {
+      if (!running) return;
+
+      const settings = difficultySettings[difficulty];
+      const balloon = document.createElement('div');
+      const size = sizes[Math.floor(Math.random() * sizes.length)];
+
+      let color, emoji, isTarget;
+
+      if (gameMode === 'color') {
+        isTarget = Math.random() > settings.distractorChance;
+        if (isTarget) {
+          color = targetColor;
+        } else {
+          const otherColors = [...balloonColors, ...distractorColors].filter(c => c !== targetColor);
+          color = otherColors[Math.floor(Math.random() * otherColors.length)];
+        }
+        emoji = '';
+      } else if (gameMode === 'emoji') {
+        isTarget = Math.random() > settings.distractorChance;
+        emoji = isTarget ? targetEmoji : balloonEmojis.filter(e => e !== targetEmoji)[Math.floor(Math.random() * (balloonEmojis.length - 1))];
+        color = balloonColors[Math.floor(Math.random() * balloonColors.length)];
+      } else if (gameMode === 'size') {
+        isTarget = Math.random() > settings.distractorChance;
+        color = balloonColors[Math.floor(Math.random() * balloonColors.length)];
+        emoji = '';
+      }
+
+      balloon.className = `balloon balloon-${color} ${gameMode === 'size' ? (isTarget ? targetSize : sizes.filter(s => s !== targetSize)[Math.floor(Math.random() * 2)]) : size}`;
+      balloon.innerHTML = `
+        <div class="balloon-body">${emoji}</div>
+        <div class="balloon-knot"></div>
+        <div class="balloon-string"></div>
+      `;
+
+      const gameRect = game.getBoundingClientRect();
+      const x = Math.random() * (gameRect.width - 100) + 20;
+      balloon.style.left = x + 'px';
+      balloon.style.bottom = '-100px';
+
+      const balloonData = {
+        el: balloon,
+        y: -100,
+        speed: settings.speed + Math.random() * 0.5,
+        isTarget: isTarget,
+        color: color,
+        emoji: emoji,
+        size: balloon.classList.contains('small') ? 'small' : balloon.classList.contains('medium') ? 'medium' : 'large'
+      };
+
+      balloon.addEventListener('click', () => {
+        if (!running) return;
+
+        const rect = balloon.getBoundingClientRect();
+        const gameRect = game.getBoundingClientRect();
+        const x = rect.left + rect.width / 2 - gameRect.left;
+        const y = rect.top + rect.height / 2 - gameRect.top;
+
+        const correct = checkIfCorrect(balloonData);
+
+        if (correct) {
+          const sizeBonus = balloonData.size === 'small' ? 30 : balloonData.size === 'medium' ? 20 : 10;
+          score += sizeBonus * (1 + combo * 0.1);
+          scoreEl.textContent = Math.floor(score);
+
+          combo++;
+          comboEl.textContent = combo;
+
+          clearTimeout(comboTimer);
+          comboTimer = setTimeout(() => {
+            combo = 0;
+            comboEl.textContent = combo;
+          }, 2000);
+
+          createExplosion(x, y, getComputedStyle(balloon.querySelector('.balloon-body')).background);
+          playSound('pop');
+
+          // Level up
+          const targetLevel = Math.floor(score / 150) + 1;
+          if (targetLevel > level) {
+            level = targetLevel;
+            levelEl.textContent = level;
+            playSound('levelup');
+            showAchievement(`🎉 Level ${level} Reached! 🎉`);
+
+            // Change target for variety
+            if (gameMode === 'color') {
+              targetColor = balloonColors[Math.floor(Math.random() * balloonColors.length)];
+            } else if (gameMode === 'emoji') {
+              targetEmoji = balloonEmojis[Math.floor(Math.random() * balloonEmojis.length)];
+            } else if (gameMode === 'size') {
+              targetSize = sizes[Math.floor(Math.random() * sizes.length)];
+            }
+            updateInstructions();
+          }
+
+          const progress = (score % 150) / 150 * 100;
+          levelProgress.style.width = progress + '%';
+
+          // Achievements
+          if (score === 100) showAchievement('🏆 First 100 Points! 🏆');
+          if (score === 500) showAchievement('🌟 Balloon Master! 🌟');
+          if (combo === 10) showAchievement('🔥 10x COMBO! 🔥');
+          if (combo === 20) showAchievement('💥 20x MEGA COMBO! 💥');
+
+        } else {
+          playSound('wrong');
+          combo = 0;
+          comboEl.textContent = combo;
+        }
+
+        balloon.remove();
+        balloons = balloons.filter(b => b.el !== balloon);
+      });
+
+      game.appendChild(balloon);
+      balloons.push(balloonData);
+    }
+
+    function checkIfCorrect(balloonData) {
+      if (gameMode === 'color') {
+        return balloonData.color === targetColor;
+      } else if (gameMode === 'emoji') {
+        return balloonData.emoji === targetEmoji;
+      } else if (gameMode === 'size') {
+        return balloonData.size === targetSize;
+      }
+      return false;
+    }
+
+    // Animation loop
+    function loop() {
+      if (!running) return;
+
+      const gameRect = game.getBoundingClientRect();
+
+      balloons.forEach(b => {
+        b.y += b.speed;
+        b.el.style.bottom = b.y + 'px';
+
+        if (b.y > gameRect.height + 100) {
+          if (b.isTarget) {
+            missed++;
+            missedEl.textContent = missed;
+            combo = 0;
+            comboEl.textContent = combo;
+          }
+          b.el.remove();
+        }
+      });
+
+      balloons = balloons.filter(b => b.y <= gameRect.height + 100);
+      requestAnimationFrame(loop);
+    }
+
+    // Start game
+    function startGame() {
+      running = false;
+      if (spawnInterval) clearInterval(spawnInterval);
+      balloons.forEach(b => b.el.remove());
+      balloons = [];
+      score = 0;
+      level = 1;
+      combo = 0;
+      missed = 0;
+
+      scoreEl.textContent = score;
+      levelEl.textContent = level;
+      comboEl.textContent = combo;
+      missedEl.textContent = missed;
+      levelProgress.style.width = '0%';
+
+      // Set random target
+      if (gameMode === 'color') {
+        targetColor = balloonColors[Math.floor(Math.random() * balloonColors.length)];
+      } else if (gameMode === 'emoji') {
+        targetEmoji = balloonEmojis[Math.floor(Math.random() * balloonEmojis.length)];
+      } else if (gameMode === 'size') {
+        targetSize = sizes[Math.floor(Math.random() * sizes.length)];
+      }
+      updateInstructions();
+
+      running = true;
+      startBtn.textContent = '🔄 Restart';
+
+      const settings = difficultySettings[difficulty];
+      spawnInterval = setInterval(spawnBalloon, settings.spawnRate);
+      loop();
+    }
+
+    // Initialize
+    createClouds();
+    startBtn.addEventListener('click', startGame);
+  </script>
+</body>
+</html>

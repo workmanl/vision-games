@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vision Quest Games - Amblyopia Vision Therapy for Kids</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0a1929 0%, #1a237e 50%, #311b92 100%);
+      color: #fff;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      padding: 40px 20px;
+      margin-bottom: 40px;
+    }
+
+    h1 {
+      font-size: clamp(2.5em, 6vw, 4em);
+      margin-bottom: 20px;
+      background: linear-gradient(45deg, #ffd700, #ffeb3b, #ffc107);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 40px rgba(255, 215, 0, 0.5);
+      animation: titlePulse 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes titlePulse {
+      from { filter: brightness(1); }
+      to { filter: brightness(1.3); }
+    }
+
+    .subtitle {
+      font-size: clamp(1.2em, 3vw, 1.8em);
+      color: #64b5f6;
+      margin-bottom: 15px;
+      font-weight: 600;
+    }
+
+    .description {
+      font-size: clamp(1em, 2vw, 1.2em);
+      color: #90caf9;
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 30px;
+      margin-top: 40px;
+      padding: 20px 0;
+    }
+
+    .game-card {
+      background: linear-gradient(135deg, rgba(26, 35, 126, 0.9) 0%, rgba(49, 27, 146, 0.9) 100%);
+      border-radius: 20px;
+      padding: 30px;
+      border: 3px solid rgba(255, 215, 0, 0.3);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .game-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .game-card:hover::before {
+      opacity: 1;
+    }
+
+    .game-card:hover {
+      transform: translateY(-10px);
+      border-color: rgba(255, 215, 0, 0.8);
+      box-shadow: 0 15px 50px rgba(255, 215, 0, 0.3);
+    }
+
+    .game-icon {
+      font-size: 4em;
+      text-align: center;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.5));
+      animation: iconFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes iconFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .game-card h2 {
+      font-size: clamp(1.3em, 2.5vw, 1.8em);
+      margin-bottom: 15px;
+      color: #ffeb3b;
+      text-align: center;
+    }
+
+    .game-card p {
+      color: #90caf9;
+      margin-bottom: 20px;
+      line-height: 1.6;
+      font-size: clamp(0.9em, 1.5vw, 1em);
+      text-align: center;
+    }
+
+    .features {
+      list-style: none;
+      margin-bottom: 25px;
+      font-size: clamp(0.85em, 1.5vw, 0.95em);
+    }
+
+    .features li {
+      padding: 8px 0;
+      color: #64b5f6;
+      position: relative;
+      padding-left: 25px;
+    }
+
+    .features li::before {
+      content: '✨';
+      position: absolute;
+      left: 0;
+    }
+
+    .play-button {
+      display: block;
+      width: 100%;
+      padding: 15px 30px;
+      background: linear-gradient(45deg, #ffd700, #ffeb3b);
+      color: #1a237e;
+      text-decoration: none;
+      border-radius: 50px;
+      font-weight: bold;
+      font-size: clamp(1em, 2vw, 1.2em);
+      text-align: center;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 5px 20px rgba(255, 215, 0, 0.4);
+    }
+
+    .play-button:hover {
+      background: linear-gradient(45deg, #ffeb3b, #ffd700);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba(255, 215, 0, 0.6);
+    }
+
+    .play-button:active {
+      transform: translateY(-1px);
+    }
+
+    footer {
+      text-align: center;
+      padding: 40px 20px 20px;
+      color: #90caf9;
+      font-size: clamp(0.9em, 1.5vw, 1em);
+      margin-top: 60px;
+    }
+
+    .info-banner {
+      background: rgba(255, 215, 0, 0.1);
+      border: 2px solid rgba(255, 215, 0, 0.3);
+      border-radius: 15px;
+      padding: 20px;
+      margin: 30px 0;
+      text-align: center;
+    }
+
+    .info-banner h3 {
+      color: #ffd700;
+      margin-bottom: 10px;
+      font-size: clamp(1.2em, 2.5vw, 1.5em);
+    }
+
+    .info-banner p {
+      color: #90caf9;
+      line-height: 1.6;
+      font-size: clamp(0.9em, 1.5vw, 1em);
+    }
+
+    @media (max-width: 768px) {
+      .games-grid {
+        grid-template-columns: 1fr;
+      }
+
+      header {
+        padding: 20px 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🎮 VISION QUEST GAMES 🎯</h1>
+      <p class="subtitle">Amblyopia Vision Therapy Games for Kids</p>
+      <p class="description">
+        Fun, engaging games specifically designed to help children with amblyopia (lazy eye)
+        improve their vision through interactive play. All games feature high-contrast colors,
+        clear visuals, and eye-tracking exercises.
+      </p>
+    </header>
+
+    <div class="info-banner">
+      <h3>🌟 Why Vision Quest Games?</h3>
+      <p>
+        Our games combine proven vision therapy techniques with engaging gameplay to make
+        visual training fun and effective. Perfect for daily practice sessions!
+      </p>
+    </div>
+
+    <div class="games-grid">
+      <!-- Space Explorer -->
+      <div class="game-card">
+        <div class="game-icon">🚀</div>
+        <h2>Space Explorer</h2>
+        <p>Catch colorful planets while tracking moving objects across the screen</p>
+        <ul class="features">
+          <li>Visual tracking exercises</li>
+          <li>Combo system for engagement</li>
+          <li>Multiple difficulty levels</li>
+          <li>Achievement notifications</li>
+        </ul>
+        <a href="Vision Quest - Space Explorer.html" class="play-button">🎮 Play Now</a>
+      </div>
+
+      <!-- Balloon Adventure -->
+      <div class="game-card">
+        <div class="game-icon">🎈</div>
+        <h2>Balloon Adventure</h2>
+        <p>Pop balloons in exciting color-matching and pattern recognition games</p>
+        <ul class="features">
+          <li>High-contrast warm colors</li>
+          <li>Color Match mode</li>
+          <li>Emoji Hunt challenge</li>
+          <li>Size Challenge mode</li>
+        </ul>
+        <a href="Vision Quest - Balloon Adventure.html" class="play-button">🎮 Play Now</a>
+      </div>
+
+      <!-- Memory Master -->
+      <div class="game-card">
+        <div class="game-icon">🧠</div>
+        <h2>Memory Master</h2>
+        <p>Match pairs of emojis to strengthen visual memory and recognition</p>
+        <ul class="features">
+          <li>Red color scheme for focus</li>
+          <li>3D card flip animations</li>
+          <li>Progressive difficulty</li>
+          <li>Visual memory training</li>
+        </ul>
+        <a href="Vision Quest Memory Master.html" class="play-button">🎮 Play Now</a>
+      </div>
+
+      <!-- Nitro Snail Runner -->
+      <div class="game-card">
+        <div class="game-icon">🐌</div>
+        <h2>Nitro Snail Runner</h2>
+        <p>Guide a turbo-charged snail through obstacles in this exciting runner game</p>
+        <ul class="features">
+          <li>Dynamic obstacle avoidance</li>
+          <li>Power-up collection</li>
+          <li>Jump and duck mechanics</li>
+          <li>Progressive difficulty</li>
+        </ul>
+        <a href="Nitro-Snail-Runner.html" class="play-button">🎮 Play Now</a>
+      </div>
+
+      <!-- Treasure Maze -->
+      <div class="game-card">
+        <div class="game-icon">💎</div>
+        <h2>Treasure Maze</h2>
+        <p>Navigate randomly generated mazes while collecting gems</p>
+        <ul class="features">
+          <li>Random maze generation</li>
+          <li>Gem collection challenges</li>
+          <li>Three difficulty levels</li>
+          <li>Timer and move tracking</li>
+        </ul>
+        <a href="Vision Quest - Treasure Maze.html" class="play-button">🎮 Play Now</a>
+      </div>
+    </div>
+
+    <div class="info-banner" style="margin-top: 60px;">
+      <h3>💡 Tips for Best Results</h3>
+      <p>
+        • Play for 15-20 minutes daily<br>
+        • Ensure good lighting<br>
+        • Sit at a comfortable distance from the screen<br>
+        • Take breaks between games<br>
+        • Consult with your eye care professional
+      </p>
+    </div>
+
+    <footer>
+      <p>
+        <strong>Vision Quest Games</strong> - Making vision therapy fun for kids with amblyopia<br>
+        All games are free to play and require no downloads or installations
+      </p>
+      <p style="margin-top: 20px; font-size: 0.9em; color: #64b5f6;">
+        🎯 Each game is designed with high-contrast colors and clear visuals optimized for vision therapy
+      </p>
+    </footer>
+  </div>
+</body>
+</html>
