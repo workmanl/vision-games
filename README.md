@@ -89,13 +89,13 @@ That's it! All games are standalone HTML files with embedded CSS and JavaScript.
 ### File Structure
 ```
 vision-games/
-├── index.html                              # Landing page
-├── Vision Quest - Space Explorer.html      # Space Explorer game
-├── Vision Quest - Balloon Adventure.html   # Balloon Adventure game
-├── Vision Quest Memory Master.html         # Memory Master game
-├── Nitro-Snail-Runner.html                # Nitro Snail Runner game
-├── Vision Quest - Treasure Maze.html      # Treasure Maze game
-└── README.md                              # This file
+├── index.html                # Landing page
+├── space-explorer.html       # Space Explorer game
+├── balloon-adventure.html    # Balloon Adventure game
+├── memory-master.html        # Memory Master game
+├── nitro-snail-runner.html   # Nitro Snail Runner game
+├── treasure-maze.html        # Treasure Maze game
+└── README.md                 # This file
 ```
 
 ## 🎓 Vision Therapy Principles
