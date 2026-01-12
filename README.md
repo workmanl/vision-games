@@ -1,12 +1,12 @@
 # 🎮 Vision Quest Games
 
-**Interactive vision therapy games for children with amblyopia (lazy eye)**
+**Interactive vision exercise games for children with amblyopia (lazy eye)**
 
 [![Play Now](https://img.shields.io/badge/Play-Now-yellow?style=for-the-badge)](https://workmanl.github.io/vision-games/)
 
 ## 🌟 About
 
-Vision Quest Games is a collection of five engaging, interactive games specifically designed to help children with amblyopia improve their vision through fun gameplay. Each game incorporates proven vision therapy techniques with high-contrast colors, clear visuals, and eye-tracking exercises.
+Vision Quest Games is a collection of five engaging, interactive games specifically designed to help children with amblyopia improve their vision through fun gameplay. Each game incorporates proven vision exercise techniques with high-contrast colors, clear visuals, and eye-tracking exercises.
 
 ## 🎯 Games Included
 
@@ -47,7 +47,7 @@ Navigate randomly generated mazes while collecting gems
 
 ## 🎨 Features
 
-- **High-contrast colors** optimized for vision therapy
+- **High-contrast colors** optimized for vision exercise
 - **No downloads required** - play directly in your browser
 - **Mobile-friendly** - works on phones, tablets, and computers
 - **Sound effects** for engaging feedback
@@ -98,9 +98,9 @@ vision-games/
 └── README.md                 # This file
 ```
 
-## 🎓 Vision Therapy Principles
+## 🎓 Vision Exercise Principles
 
-These games incorporate several key vision therapy techniques:
+These games incorporate several key vision exercise techniques:
 
 - **Visual Tracking**: Following moving objects (Space Explorer, Balloon Adventure)
 - **Visual Memory**: Remembering and matching patterns (Memory Master)
@@ -136,11 +136,11 @@ Contributions are welcome! If you'd like to improve the games or add new feature
 
 ## 📄 License
 
-This project is open source and available for educational and therapeutic use.
+This project is open source and available for educational use.
 
 ## ⚠️ Medical Disclaimer
 
-These games are designed as supplementary tools for vision therapy and should not replace professional medical advice or treatment. Always consult with an eye care professional before beginning any vision therapy program.
+These games are designed as supplementary tools for vision exercise and should not replace professional medical advice or treatment. Always consult with an eye care professional before beginning any vision exercise program.
 
 ## 🙏 Acknowledgments
 
